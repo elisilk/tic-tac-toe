@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Solution to Frontend Mentor's Tic Tac Toe design challenge.">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+
+    <title>Frontend Mentor | Tic Tac Toe</title>
+  </head>
+  <body>
+
+    <svg style="display: none">
+      <symbol id="icon-x" viewBox="0 0 64 64" aria-labelledby="icon-x-title">
+        <title id="icon-x-title">X</title>
+        <path d="M15.002 1.147 32 18.145 48.998 1.147a3 3 0 0 1 4.243 0l9.612 9.612a3 3 0 0 1 0 4.243L45.855 32l16.998 16.998a3 3 0 0 1 0 4.243l-9.612 9.612a3 3 0 0 1-4.243 0L32 45.855 15.002 62.853a3 3 0 0 1-4.243 0L1.147 53.24a3 3 0 0 1 0-4.243L18.145 32 1.147 15.002a3 3 0 0 1 0-4.243l9.612-9.612a3 3 0 0 1 4.243 0Z" fill-rule="evenodd"/>
+      </symbol>
+      <symbol id="icon-o" viewBox="0 0 64 64" aria-labelledby="icon-o-title">
+        <title id="icon-o-title">O</title>
+        <path d="M32 0c17.673 0 32 14.327 32 32 0 17.673-14.327 32-32 32C14.327 64 0 49.673 0 32 0 14.327 14.327 0 32 0Zm0 18.963c-7.2 0-13.037 5.837-13.037 13.037 0 7.2 5.837 13.037 13.037 13.037 7.2 0 13.037-5.837 13.037-13.037 0-7.2-5.837-13.037-13.037-13.037Z"/>
+      </symbol>
+      <symbol id="icon-x-outline" viewBox="0 0 64 64" aria-labelledby="icon-x-outline-title">
+        <title id="icon-x-outline-title">X outline</title>
+        <path d="M51.12 1.269c.511 0 1.023.195 1.414.586l9.611 9.611c.391.391.586.903.586 1.415s-.195 1.023-.586 1.414L44.441 32l17.704 17.705c.391.39.586.902.586 1.414 0 .512-.195 1.024-.586 1.415l-9.611 9.611c-.391.391-.903.586-1.415.586a1.994 1.994 0 0 1-1.414-.586L32 44.441 14.295 62.145c-.39.391-.902.586-1.414.586a1.994 1.994 0 0 1-1.415-.586l-9.611-9.611a1.994 1.994 0 0 1-.586-1.415c0-.512.195-1.023.586-1.414L19.559 32 1.855 14.295a1.994 1.994 0 0 1-.586-1.414c0-.512.195-1.024.586-1.415l9.611-9.611c.391-.391.903-.586 1.415-.586s1.023.195 1.414.586L32 19.559 49.705 1.855c.39-.391.902-.586 1.414-.586Z" stroke-width="2" fill="none"/></symbol>
+      <symbol id="icon-o-outline" viewBox="0 0 66 66" aria-labelledby="icon-o-outline-title">
+        <title id="icon-o-outline-title">O outline</title>
+        <path d="M33 1c17.673 0 32 14.327 32 32 0 17.673-14.327 32-32 32C15.327 65 1 50.673 1 33 1 15.327 15.327 1 33 1Zm0 18.963c-7.2 0-13.037 5.837-13.037 13.037 0 7.2 5.837 13.037 13.037 13.037 7.2 0 13.037-5.837 13.037-13.037 0-7.2-5.837-13.037-13.037-13.037Z" stroke-width="2" fill="none"/>
+      </symbol>
+      <symbol id="icon-restart" viewBox="0 0 20 20" aria-labelledby="icon-restart-title">
+        <title id="icon-restart-title">Restart</title>
+        <path d="M19.524 0h-1.88a.476.476 0 0 0-.476.499l.159 3.284A9.81 9.81 0 0 0 9.835.317C4.415.317-.004 4.743 0 10.167.004 15.597 4.406 20 9.835 20a9.796 9.796 0 0 0 6.59-2.536.476.476 0 0 0 .019-.692l-1.348-1.349a.476.476 0 0 0-.65-.022 6.976 6.976 0 0 1-9.85-.63 6.987 6.987 0 0 1 .63-9.857 6.976 6.976 0 0 1 10.403 1.348l-4.027-.193a.476.476 0 0 0-.498.476v1.881c0 .263.213.476.476.476h7.944A.476.476 0 0 0 20 8.426V.476A.476.476 0 0 0 19.524 0Z"/>
+      </symbol>
+    </svg>
+
+    <header>
+      <h1 class="visually-hidden">Tic Tac Toe game</h1>
+    </header>
+
+    <main class="base-layout">
+
+      <form id="main-menu" class="main-menu__container" aria-labelledby="main-menu-title">
+        <h2 id="main-menu-title" class="visually-hidden">Main Menu</h2>
+
+        <img src="assets/logo.svg" alt="logo" class="logo" width="72" height="32">
+
+        <fieldset class="main-menu__pick-player1 box box--semi-dark box--with-shadow">
+          <legend>
+            <span class="heading-xs">Pick player 1's mark</span></legend>
+          <div class="box box--small box--dark">
+            <label class="pick-player-label box box--small box--interactive box--dark">
+              <span class="visually-hidden">Player 1 be X</span>
+              <input type="radio" id="player-1-mark-x" name="player-1-mark" value="X" checked>
+              <svg role="img" class="icon" aria-hidden="true" focusable="false">
+                <use xlink:href="#icon-x"/>
+              </svg>
+            </label>
+            <label class="pick-player-label box box--small box--interactive box--dark">
+              <span class="visually-hidden">Player 1 be O</span>
+              <input type="radio" id="player-1-mark-o" name="player-1-mark" value="O">
+              <svg role="img" class="icon" aria-hidden="true" focusable="false">
+                <use xlink:href="#icon-o"/>
+              </svg>
+            </label>
+          </div>
+          <p class="body">Remember : X goes first</p>
+        </fieldset>
+
+        <div class="main-menu__buttons">
+          <button type="button" value="new-game-vs-cpu" id="new-game-vs-cpu-button" class="box box--with-shadow box--interactive box--yellow btn--main heading-s">New Game (vs CPU)</button>
+          <button type="button" value="new-game-vs-player" id="new-game-vs-player-button" class="box box--with-shadow box--interactive box--blue btn--main heading-s">New Game (vs player)</button>
+        </div>
+      </form>
+
+      <section id="active-gameboard" class="active-gameboard hidden" aria-labelledby="gameboard-title">
+        <div id="header" class="three-cols three-cols--header">
+          <h2 id="gameboard-title" class="visually-hidden">Active Gameboard</h2>
+          <img src="assets/logo.svg" alt="logo" class="logo" width="72" height="32">
+          <div id="gameboard-turn" class="box box--small box--semi-dark box--with-shadow box--header box--turn" data-turn="x">
+            <svg role="img" class="icon icon--turn icon--turn-x">
+              <use xlink:href="#icon-x"/>
+            </svg>
+            <svg role="img" class="icon icon--turn icon--turn-o">
+              <use xlink:href="#icon-o"/>
+            </svg>
+            <span class="heading-xs">turn</span>
+          </div>
+          <button type="button" id="restart-game" class="box box--small box--with-shadow box--interactive btn--header">
+            <svg role="img" class="icon icon--restart">
+              <use xlink:href="#icon-restart"/>
+            </svg>
+          </button>
+        </div>
+        <div class="gameboard three-cols">
+          <button type="button" id="r1c1" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r1c2" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r1c3" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r2c1" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r2c2" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r2c3" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r3c1" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r3c2" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+          <button type="button" id="r3c3" class="box box--with-shadow box--interactive box--semi-dark gameboard-space"></button>
+        </div>
+        <div id="scoreboard" class="three-cols">
+          <div class="box box--blue box--score">
+            <div class="label body-s">
+              <span>X</span>
+              <span id="shortname-player-x" class="shortname">(You)</span>
+            </div>
+            <div id="wins-player-x" class="count-wins heading-m">0</div>
+          </div>
+          <div class="box box--silver box--score">
+            <div class="label body-s">Ties</div>
+            <div id="ties-count" class="count-wins heading-m">0</div>
+          </div>
+          <div class="box box--yellow box--score">
+            <div class="label body-s">
+              <span>O</span>
+              <span id="shortname-player-o" class="shortname">(CPU)</span>
+            </div>
+            <div id="wins-player-o" class="count-wins heading-m">0</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="results-dialog" class="results" aria-labelledby="results-title" data-winning-player="tie" data-winning-mark="tie">
+      <h2 id="results-title" class="visually-hidden">Game Results</h2>
+      <p class="results__winner-player heading-xxs">
+        <span class="results__you-lost">Oh no, you lost&hellip;</span>
+        <span class="results__you-won">You won!</span>
+        <span class="results__player1-wins">Player 1 wins!</span>
+        <span class="results__player2-wins">Player 2 wins!</span>
+      </p>
+      <div class="results__winner-mark">
+        <!-- Tied -->
+        <p class="results__tied heading-l">Round tied</p>
+        <!-- X wins -->
+        <p class="results__x-wins heading-l text--x">
+          <svg role="img" class="icon icon--x">
+            <use xlink:href="#icon-x"/>
+          </svg>
+          <span>takes the round</span>
+        </p>
+        <!-- O wins -->
+        <p class="results__o-wins heading-l text--o">
+          <svg role="img" class="icon icon--o">
+            <use xlink:href="#icon-o"/>
+          </svg>
+          <span>takes the round</span>
+        </p>
+      </div>
+      <div class="results__buttons">
+        <form method="dialog">
+          <button type="submit" id="quit" class="box box--small box--with-shadow box--interactive btn--dialog heading-xs">Quit</button>
+        </form>
+        <button type="submit" id="next-round" class="box box--small box--with-shadow box--interactive btn--dialog box--yellow heading-xs">Next round</button>
+      </div>
+    </dialog>
+
+    <dialog id="restart-dialog" class="results" aria-labelledby="restart-title">
+      <h2 id="restart-title" class="heading-l">Restart game?</h2>
+      <div class="results__buttons">
+        <form method="dialog">
+          <button type="submit" id="restart-game-no" id="" class="box box--small box--with-shadow box--interactive btn--dialog heading-xs">No, cancel</button>
+        </form>
+        <button type="button" id="restart-game-yes"  class="box box--small box--with-shadow box--interactive btn--dialog box--yellow heading-xs">Yes, restart</button>
+      </div>
+    </dialog>
+
+  </body>
+
+</html>
