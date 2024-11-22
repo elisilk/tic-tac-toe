@@ -2,6 +2,8 @@
 // Global variables
 // ----------------------------------------
 
+const cpuMoveDelay = 1000;
+
 const gameHistory = {
   winsPlayerX: 0,
   winsPlayerO: 0,
@@ -40,11 +42,11 @@ const gameState = {
 
 const gamePieceIcons = {
   x: {
-    classNames: ["icon", "icon--x", "icon--filled"],
+    classNames: ["icon", "icon--x", "icon--filled", "icon--animated"],
     svgId: "#icon-x",
   },
   o: {
-    classNames: ["icon", "icon--o", "icon--filled"],
+    classNames: ["icon", "icon--o", "icon--filled", "icon--animated"],
     svgId: "#icon-o",
   },
   "x-outline": {
@@ -431,7 +433,8 @@ const playGameboardSpace = (spaceId) => {
   gameboardTurn.dataset.turn = gameState.whoseTurn;
 
   // If CPU's turn, then have CPU make a move
-  cpuMakeMove();
+  // cpuMakeMove();
+  setTimeout(cpuMakeMove, cpuMoveDelay);
 };
 
 const invertGameboardSpace = (spaceId) => {
@@ -547,7 +550,8 @@ const renderNewGame = () => {
   gameboard.classList.remove("hidden");
 
   // If CPU's turn, then make a move
-  cpuMakeMove();
+  // cpuMakeMove();
+  setTimeout(cpuMakeMove, cpuMoveDelay);
 };
 
 const renderRestartDialog = () => {

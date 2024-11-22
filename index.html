@@ -132,7 +132,7 @@
       </section>
     </main>
 
-    <dialog id="results-dialog" class="results" aria-labelledby="results-title" data-winning-player="tie" data-winning-mark="tie">
+    <dialog id="results-dialog" class="dialog" aria-labelledby="results-title" data-winning-player="tie" data-winning-mark="tie">
       <h2 id="results-title" class="visually-hidden">Game Results</h2>
       <p class="results__winner-player heading-xxs">
         <span class="results__you-lost">Oh no, you lost&hellip;</span>
@@ -158,7 +158,7 @@
           <span>takes the round</span>
         </p>
       </div>
-      <div class="results__buttons">
+      <div class="dialog__buttons">
         <form method="dialog">
           <button type="submit" id="quit" class="box box--small box--with-shadow box--interactive btn--dialog heading-xs">Quit</button>
         </form>
@@ -166,9 +166,9 @@
       </div>
     </dialog>
 
-    <dialog id="restart-dialog" class="results" aria-labelledby="restart-title">
+    <dialog id="restart-dialog" class="dialog" aria-labelledby="restart-title">
       <h2 id="restart-title" class="heading-l">Restart game?</h2>
-      <div class="results__buttons">
+      <div class="dialog__buttons">
         <form method="dialog">
           <button type="submit" id="restart-game-no" id="" class="box box--small box--with-shadow box--interactive btn--dialog heading-xs">No, cancel</button>
         </form>

@@ -105,8 +105,17 @@ Specific areas that the solution should be improved (known issues):
 
 - **Bonus #1**: Save the game state in the browser so that it’s preserved if the player refreshes their browser
 - **Bonus #2**: Improve the CPU's game play algorithm; Instead of having the computer randomly make their moves, try making it clever so it’s proactive in blocking your moves and trying to win
-- Figure out why the "O" icons seem to have the edges cut off a bit, and correct
-- Should have animations when a mark is placed, especially when the CPU is placing it, so it's more obvious to the user (and not so quick)
+- Figure out why the "O" icons seem to have the edges cut off a bit, and correct it
+- Have a delay when the CPU is making a move
+  - Make sure the handleGameboardSpaceMouseEnter and the handleGameboardSpaceClick are disabled (temporarily) so that a user cannot add in icons while it's the CPU's turn (or really until any animation is complete?)
+- Animations
+  - Changing the main menu radio button from X to O
+  - When a mark is placed, especially when the CPU is placing it, so it's more obvious to the user
+  - When user is placing a mark, it should animate from the outline to the filled in icon more seamlessly
+  - Animate the changing of the whose turn icon
+  - Animate the open and closing of the dialogs (and their backdrops)?
+  - Animate the start of a new game? And the transition from the quit dialog to the main menu?
+- Have an animation when the dialog is opened
 - I have an outline on the radio buttons when the button is focused. But when the left radio buttin is in focus, the right side of the outline gets obscured by the right radio button. It would be great to figure out a way to make that outline come to the top. The design has the two buttons right next to each other with no gap, so that presents a challenge. And I like have a big chunky outline as I think it is consistent with the rest of the design. And I also like the outline extended a little beyond the box (instead of as an inset), since I think it is more visible on all the other boxes that way. But maybe the radio buttons should have a special modifier that puts their outline inset a bit since I'm not sure what other way to solve the issue.
 
 More general ideas I want to consider:
