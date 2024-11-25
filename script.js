@@ -152,6 +152,16 @@ const findWinningMoves = () => {
   return -1;
 };
 
+const cpuMark = () => {
+  // If multiplayer game, then CPU not involved, so return
+  if (gameState.isMultiplayer) return null;
+  // If CPU is X and it's not X's turn, then return
+  if (gameState.playerX.name === "CPU") return "x";
+  // If CPU is O and it's not O's turn, then return
+  if (gameState.playerO.name === "CPU") return "o";
+  return null;
+};
+
 const cpuMakeMove = () => {
   // If multiplayer game, then CPU not involved, so return
   if (gameState.isMultiplayer) return;
@@ -164,23 +174,11 @@ const cpuMakeMove = () => {
   gameState.isCPUTurn = true;
 
   // Find the next space to play
-  // (randomly or from some other fancier algorithm)
-
-  // Find all the available spaces remaining
-  const availableSpaces = Object.keys(gameState.gameboard).filter(
-    (key) => gameState.gameboard[key] === ""
-  );
-
-  // Fancier algorithm (pseudocode)
-  // - if a winning move exists for the CPU, play that move
-  // - if a winning move exists for the user, play that move (defensively)
-  // - (try to set up opportunites for two options to win)
-  // - (try to limit user opportunites for two options to win)
-  cpuEvaluateOptions();
+  fc = 0;
+  const minimaxResult = minimax({ ...gameState.gameboard }, cpuMark());
 
   // Choose randomly among the remaining available spaces
-  const chosenSpaceId =
-    availableSpaces[Math.floor(Math.random() * availableSpaces.length)];
+  const chosenSpaceId = minimaxResult.index;
 
   // Build in a delay for the CPU's turn (for dramatic effect)
   setTimeout(() => {
@@ -347,6 +345,49 @@ const getSpacesInDiagonal = (diagonal = 1) => {
   );
 };
 
+const getSurroundingSpaces = (gameboard, spaceId, direction) => {
+  const row = spaceId.charAt(1);
+  if (direction === "row")
+    return Object.fromEntries(
+      Object.entries(gameboard).filter(([k]) =>
+        [`r${row}c1`, `r${row}c2`, `r${row}c3`].includes(k)
+      )
+    );
+
+  const column = spaceId.charAt(3);
+  if (direction === "column")
+    return Object.fromEntries(
+      Object.entries(gameboard).filter(([k]) =>
+        [`r1c${column}`, `r2c${column}`, `r3c${column}`].includes(k)
+      )
+    );
+
+  let diagonal;
+  switch (spaceId) {
+    case "r1c1":
+    case "r2c2":
+    case "r3c3":
+      diagonal = 1;
+      break;
+    case "r1c3":
+    case "r3c1":
+      diagonal = 3;
+      break;
+    default:
+      return null;
+      break;
+  }
+
+  if (direction === "diagonal")
+    return Object.fromEntries(
+      Object.entries(gameboard).filter(([k]) =>
+        [`r${diagonal}c1`, `r2c2`, `r${diagonal === 1 ? 3 : 1}c3`].includes(k)
+      )
+    );
+
+  return null;
+};
+
 const calculateSpacesWinPotential = (spaces) => {
   // Map marks of "", "x", and "o" to points
   // Every "x" is +1 points
@@ -359,54 +400,136 @@ const calculateSpacesWinPotential = (spaces) => {
       return 0;
     })
     .reduce((totalScore, spaceScore) => totalScore + spaceScore, 0);
+
+  // 3 spaces occupied
   // if three "x", then score = 3
+  // if three "o", then score = -3
+
   // if two "x" & one "", then score = 2
   // if one "x" & two "", then score = 1
   // if three "", then score = 0
   // if one "o" & two "", then score = -1
   // if two "o" & one "", then score = -2
-  // if three "o", then score = -3
+
   // if one "" & one of "x" & one of "o", then score = (0?)
 };
 
-const cpuGameStateEvaluation = {
-  row1: { type: "row", startLocation: 1, winPotential: 0 },
-  row2: { type: "row", startLocation: 2, winPotential: 0 },
-  row3: { type: "row", startLocation: 3, winPotential: 0 },
-  col1: { type: "column", startLocation: 1, winPotential: 0 },
-  col2: { type: "column", startLocation: 2, winPotential: 0 },
-  col3: { type: "column", startLocation: 3, winPotential: 0 },
-  diag1: { type: "diagonal", startLocation: 1, winPotential: 0 },
-  diag3: { type: "diagonal", startLocation: 3, winPotential: 0 },
+const winOptions = {
+  row1: { type: "row", startLocation: "r1c1" },
+  row2: { type: "row", startLocation: "r2c1" },
+  row3: { type: "row", startLocation: "r3c1" },
+  col1: { type: "column", startLocation: "r1c1" },
+  col2: { type: "column", startLocation: "r1c2" },
+  col3: { type: "column", startLocation: "r1c3" },
+  diag1: { type: "diagonal", startLocation: "r1c1" },
+  diag3: { type: "diagonal", startLocation: "r1c3" },
 };
 
-const cpuEvaluateOptions = () => {
-  //console.log(getSpacesInDiagonal(1));
-  calculateSpacesWinPotential(getSpacesInDiagonal(1));
+const isMarkAWinnerInTrio = (trio, mark = "x") => {
+  return Object.values(trio).every((el) => el === mark);
+};
 
-  return false;
+const findMarkWinningTrios = (gameboard, mark) => {
+  return Object.entries(winOptions).filter(([key, value]) =>
+    isMarkAWinnerInTrio(
+      getSurroundingSpaces(gameboard, value.startLocation, value.type),
+      mark
+    )
+  );
+};
 
-  // Retrieve the 3 spaces under consideration
-  // Exactly two must have marks played on them
-  // The third space must be open
-  // The two marks must be the same mark
-  // If all those are true, then return true
+const isMarkAWinner = (gameboard = gameState.gameboard, mark = "x") => {
+  if (isTied(gameboard)) return false;
 
-  // Find all the available spaces remaining
-  /* const availableSpaces = Object.keys(gameState.gameboard).filter(
-    (key) => gameState.gameboard[key] === ""
-  ); */
+  // Check each of the win options
+  // if any are winners, then return true
+  return findMarkWinningTrios(gameboard, mark).length > 0;
+};
 
-  /* const row = gameState.winner.startingSpace.charAt(1);
-  // invert the other spaces in that row
-  invertGameboardSpace(`r${row}c2`);
-  invertGameboardSpace(`r${row}c3`); */
+const cpuGameStateEvaluation = {
+  row1: { type: "row", startLocation: "r1c1", winPotential: 0 },
+  row2: { type: "row", startLocation: "r2c1", winPotential: 0 },
+  row3: { type: "row", startLocation: "r3c1", winPotential: 0 },
+  col1: { type: "column", startLocation: "r1c1", winPotential: 0 },
+  col2: { type: "column", startLocation: "r1c2", winPotential: 0 },
+  col3: { type: "column", startLocation: "r1c3", winPotential: 0 },
+  diag1: { type: "diagonal", startLocation: "r1c1", winPotential: 0 },
+  diag3: { type: "diagonal", startLocation: "r1c3", winPotential: 0 },
+};
 
-  /* return (
-    gameState.gameboard[`r${row}c1`] !== "" &&
-    gameState.gameboard[`r${row}c1`] === gameState.gameboard[`r${row}c2`] &&
-    gameState.gameboard[`r${row}c1`] === gameState.gameboard[`r${row}c3`]
-  ); */
+// to keep count of function calls
+var fc = 0;
+
+const minimax = (gameboard, mark = "x") => {
+  fc++;
+  var availableSpaces = findAvailableSpaces(gameboard);
+
+  // checks for terminal states => win, lose, or tie
+  // return a value accordingly
+  if (isMarkAWinner(gameboard, cpuMark())) {
+    return { score: 10 };
+  } else if (isMarkAWinner(gameboard, cpuMark() === "x" ? "o" : "x")) {
+    return { score: -10 };
+  } else if (availableSpaces.length === 0) {
+    return { score: 0 };
+  }
+
+  // an array to collect all the objects
+  var moves = [];
+
+  // loop through available spots
+  for (var i = 0; i < availableSpaces.length; i++) {
+    //create an object for each and store the index of that spot that was stored as a number in the object's index key
+    var move = {};
+    move.index = availableSpaces[i];
+    //move.score = 0;
+
+    // set the empty spot to the current player
+    gameboard[availableSpaces[i]] = mark;
+
+    // collect the score resulting from calling minimax on the opponent of the current player
+    var result = minimax(gameboard, mark === "x" ? "o" : "x");
+    move.score = result.score;
+    /* if (mark === cpuMark()) {
+      var result = minimax(gameboard, huPlayer);
+      move.score = result.score;
+    } else {
+      var result = minimax(gameboard, aiPlayer);
+      move.score = result.score;
+    } */
+
+    //reset the spot to empty
+    gameboard[availableSpaces[i]] = "";
+
+    // push the object to the array
+    moves.push(move);
+  }
+
+  var bestMove;
+  var bestScore;
+
+  if (mark === cpuMark()) {
+    // if it is the CPU's turn loop over the moves and choose the move with the highest score
+    bestScore = -10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score > bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  } else {
+    // else it's the human's turn, so loop over the moves and choose the move with the lowest score
+    bestScore = 10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score < bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+
+  // return the chosen move (object) from the array to the higher depth
+  return moves[bestMove];
 };
 
 const isWinnerInRow = (row = 1) => {
@@ -450,9 +573,14 @@ const isWinner = () => {
   );
 };
 
-const isTied = () => {
+const isTied = (gameboard = gameState.gameboard) => {
   // Check if any blank spaces remaining on the gameboard
-  return Object.values(gameState.gameboard).indexOf("") == -1;
+  //return Object.values(gameState.gameboard).indexOf("") == -1;
+  return findAvailableSpaces(gameboard).length === 0;
+};
+
+const findAvailableSpaces = (gameboard = gameState.gameboard) => {
+  return Object.keys(gameboard).filter((key) => gameboard[key] === "");
 };
 
 // ----------------------------------------
