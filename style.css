@@ -672,38 +672,40 @@ h4 {
   justify-content: center;
   text-align: center;
 
-  transition: display 1s allow-discrete, overlay 1s allow-discrete;
-  animation: close 1s forwards;
-  &[open] {
-    animation: open 1s forwards;
-  }
-}
-
-@keyframes open {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes close {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  opacity: 0;
+  translate: 0 25vh;
+  transition-property: display opacity overlay;
+  transition-duration: 1s;
+  transition-behavior: allow-discrete;
 }
 
 .dialog[open] {
   display: grid;
+  opacity: 1;
+  translate: 0 0;
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 -25vh;
+  }
 }
 
 .dialog::backdrop {
   background-color: hsl(0 0% 0%);
+  opacity: 0;
+  transition-property: display opacity overlay;
+  transition-duration: 1s;
+  transition-behavior: allow-discrete;
+}
+
+.dialog[open]::backdrop {
   opacity: 0.5; /* 0.5 */
+}
+
+@starting-style {
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
 }
 
 .results__winner-player {

@@ -103,8 +103,16 @@ Hmm 🤔 ...
 
 Specific areas that the solution should be improved (known issues):
 
-- **Bonus #1**: Save the game state in the browser so that it’s preserved if the player refreshes their browser
-- **Bonus #2**: Improve the CPU's game play algorithm; Instead of having the computer randomly make their moves, try making it clever so it’s proactive in blocking your moves and trying to win
+- I am finding a case where the CPU's playing algorithm (as I've currently implemented it) is not doing the optimal move. Specifically, it is when the CPU is O and the following sequence of moves occurs:
+  - X (human) to r1c1
+  - O (CPU) to r2c2
+  - X (human) to r3c3
+  - O (CPU) to r1c2
+  - X (human) to r3c2
+  - O (CPU) to r3c1
+  - X (human) to r1c3
+  - O (CPU) to r2c1 (WHY???? Why doesn't it know to block player X in r2c3?)
+  - X (human) to r2c3 (X wins)
 - Consider using a [mouseover](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event) event for the gameboard spaces instead of a [mouseenter](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseenter_event) event, to handle the case when the mouse is already hovering over a gameboard space when the CPU turn is complete and so it should create an outlined mark right away, rather than waiting for an entire new mouse reentry into the gameboard space
 - Think about [autofocus](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autofocus) of some buttons when a dialog is open, and what would be best in each case
 - Figure out why the "O" icons seem to have the edges cut off a bit, and correct it
