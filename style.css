@@ -307,7 +307,7 @@ h4 {
 }
 
 .icon--animated {
-  animation: fadeIn 2s forwards;
+  animation: fadeIn 1s forwards;
 }
 
 @keyframes fadeIn {
@@ -316,6 +316,15 @@ h4 {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
@@ -603,6 +612,7 @@ h4 {
   display: grid;
   justify-content: center;
   align-items: stretch;
+  transition: 0.5s background-color ease-in-out;
   --padding-block: 11px;
 }
 

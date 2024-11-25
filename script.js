@@ -52,11 +52,11 @@ const gamePieceIcons = {
     svgId: "#icon-o",
   },
   "x-outline": {
-    classNames: ["icon", "icon--x", "icon--outline"],
+    classNames: ["icon", "icon--x", "icon--outline", "icon--animated"],
     svgId: "#icon-x-outline",
   },
   "o-outline": {
-    classNames: ["icon", "icon--o", "icon--outline"],
+    classNames: ["icon", "icon--o", "icon--outline", "icon--animated"],
     svgId: "#icon-o-outline",
   },
 };
