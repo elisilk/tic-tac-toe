@@ -105,6 +105,8 @@ Specific areas that the solution should be improved (known issues):
 
 - **Bonus #1**: Save the game state in the browser so that it’s preserved if the player refreshes their browser
 - **Bonus #2**: Improve the CPU's game play algorithm; Instead of having the computer randomly make their moves, try making it clever so it’s proactive in blocking your moves and trying to win
+- Consider using a [mouseover](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event) event for the gameboard spaces instead of a [mouseenter](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseenter_event) event, to handle the case when the mouse is already hovering over a gameboard space when the CPU turn is complete and so it should create an outlined mark right away, rather than waiting for an entire new mouse reentry into the gameboard space
+- Think about [autofocus](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autofocus) of some buttons when a dialog is open, and what would be best in each case
 - Figure out why the "O" icons seem to have the edges cut off a bit, and correct it
 - Have a delay when the CPU is making a move
   - Make sure the handleGameboardSpaceMouseEnter and the handleGameboardSpaceClick are disabled (temporarily) so that a user cannot add in icons while it's the CPU's turn (or really until any animation is complete?)
@@ -116,7 +118,7 @@ Specific areas that the solution should be improved (known issues):
   - Animate the open and closing of the dialogs (and their backdrops)?
   - Animate the start of a new game? And the transition from the quit dialog to the main menu?
 - Have an animation when the dialog is opened
-- I have an outline on the radio buttons when the button is focused. But when the left radio buttin is in focus, the right side of the outline gets obscured by the right radio button. It would be great to figure out a way to make that outline come to the top. The design has the two buttons right next to each other with no gap, so that presents a challenge. And I like have a big chunky outline as I think it is consistent with the rest of the design. And I also like the outline extended a little beyond the box (instead of as an inset), since I think it is more visible on all the other boxes that way. But maybe the radio buttons should have a special modifier that puts their outline inset a bit since I'm not sure what other way to solve the issue.
+- I have an outline on the radio buttons when the button is focused. But when the left radio button is in focus, the right side of the outline gets obscured by the right radio button. It would be great to figure out a way to make that outline come to the top. The design has the two buttons right next to each other with no gap, so that presents a challenge. And I like have a big chunky outline as I think it is consistent with the rest of the design. And I also like the outline extended a little beyond the box (instead of as an inset), since I think it is more visible on all the other boxes that way. But maybe the radio buttons should have a special modifier that puts their outline inset a bit since I'm not sure what other way to solve the issue.
 
 More general ideas I want to consider:
 

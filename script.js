@@ -4,22 +4,18 @@
 
 const cpuMoveDelay = 1000;
 
-const gameHistory = {
-  winsPlayerX: 0,
-  winsPlayerO: 0,
-  ties: 0,
-};
-
 // keep track of current state:
 // - who is each player
 // - whose turn is it
 // - what pieces have been played in which spaces
 
-const gameState = {
+var gameState = null;
+var gameStateReset = {
   playerX: { mark: "", name: "", shortname: "" },
   playerO: { mark: "", name: "", shortname: "" },
   isMultiplayer: true,
   whoseTurn: "",
+  isCPUTurn: false,
   gameboard: {
     r1c1: "",
     r1c2: "",
@@ -31,12 +27,18 @@ const gameState = {
     r3c2: "",
     r3c3: "",
   },
+  isGameOver: false,
   isTied: false,
   isWinner: false,
   winner: {
     mark: "",
     startingSpace: "",
     direction: "",
+  },
+  history: {
+    winsPlayerX: 0,
+    winsPlayerO: 0,
+    ties: 0,
   },
 };
 
@@ -57,6 +59,56 @@ const gamePieceIcons = {
     classNames: ["icon", "icon--o", "icon--outline"],
     svgId: "#icon-o-outline",
   },
+};
+
+// ----------------------------------------
+// Local storage
+// ----------------------------------------
+
+// To reset (clear) ALL of the local storage;
+// not just contents set by this website
+// localStorage.clear();
+
+const storageKey = "tic-tac-toe-game";
+
+// General utility functions
+
+const isLocalStoragePermitted = () => {
+  return "localStorage" in window && window["localStorage"] !== null;
+};
+
+const getLocalStorageValue = (storageKey) => {
+  return JSON.parse(localStorage.getItem(storageKey));
+};
+
+const setLocalStorageValue = (value, storageKey) => {
+  localStorage.setItem(storageKey, JSON.stringify(value));
+};
+
+const clearLocalStorageValue = (storageKey) => {
+  localStorage.removeItem(storageKey);
+};
+
+// Application specific functions (Tic Tac Toe game state)
+
+const clearGameState = () => {
+  clearLocalStorageValue(storageKey);
+  gameState = null;
+};
+
+const createNewGameState = () => {
+  // (Deep) copy a new game state reset object to start over
+  gameState = JSON.parse(JSON.stringify(gameStateReset));
+};
+
+const loadExistingGameState = () => {
+  const existingGameState = getLocalStorageValue(storageKey);
+
+  // If not local storagae game state exists, then return
+  if (!existingGameState) return null;
+
+  // Otherwise, read that existing game state in
+  renderExistingGame(existingGameState);
 };
 
 // ----------------------------------------
@@ -108,6 +160,9 @@ const cpuMakeMove = () => {
   // If CPU is O and it's not O's turn, then return
   if (gameState.playerO.name === "CPU" && gameState.whoseTurn !== "o") return;
 
+  // Update game state to indicate it is the CPU's turn
+  gameState.isCPUTurn = true;
+
   // Find the next space to play
   // (randomly or from some other fancier algorithm)
 
@@ -127,18 +182,27 @@ const cpuMakeMove = () => {
   const chosenSpaceId =
     availableSpaces[Math.floor(Math.random() * availableSpaces.length)];
 
-  // Place appropriate mark (in its final form)
-  const chosenSpace = getGameboardSpaceFromId(chosenSpaceId);
-  chosenSpace.appendChild(createGameboardPiece(gameState.whoseTurn));
+  // Build in a delay for the CPU's turn (for dramatic effect)
+  setTimeout(() => {
+    // Place appropriate mark (in its final form)
+    const chosenSpace = getGameboardSpaceFromId(chosenSpaceId);
+    chosenSpace.appendChild(createGameboardPiece(gameState.whoseTurn));
 
-  // Update the game state
-  recordMove(chosenSpaceId);
+    // Update the game state
+    recordMove(chosenSpaceId);
 
-  // If game is ended, then stop game and render results
-  if (renderEndGame()) return;
+    // Update game state to indicate the CPU's turn is complete
+    gameState.isCPUTurn = false;
 
-  // If game still going, then update whose turn it is
-  gameboardTurn.dataset.turn = gameState.whoseTurn;
+    // If game is ended, then stop game and render results
+    if (renderEndGame()) return;
+
+    // If game still going, then update whose turn it is
+    gameboardTurn.dataset.turn = gameState.whoseTurn;
+
+    // Save state to local storage
+    setLocalStorageValue(gameState, storageKey);
+  }, cpuMoveDelay);
 };
 
 // ----------------------------------------
@@ -159,6 +223,7 @@ const startNewGame = (playerX, playerO) => {
   );
 
   // Clear the results
+  gameState.isGameOver = false;
   gameState.isTied = false;
   gameState.isWinner = false;
   Object.keys(gameState.winner).forEach((key) => (gameState.winner[key] = ""));
@@ -174,6 +239,7 @@ const recordMove = (spaceId) => {
   const winnerInfo = findWinner();
   if (winnerInfo) {
     // Update game state with the winner information
+    gameState.isGameOver = true;
     gameState.isWinner = true;
     gameState.winner = winnerInfo;
     return;
@@ -182,6 +248,7 @@ const recordMove = (spaceId) => {
   // Check if new move results in a tie
   if (isTied()) {
     // Update game state with the tie state
+    gameState.isGameOver = true;
     gameState.isTied = true;
     return;
   }
@@ -407,7 +474,7 @@ const isGameboardSpaceAvailable = (spaceId) => {
 
 const playGameboardSpace = (spaceId) => {
   // If game already over, then don't do anything
-  if (gameState.isWinner || gameState.isTied) return;
+  if (gameState.isGameOver) return;
 
   // Find the gameboard space HTML element
   const gameboardSpace = getGameboardSpaceFromId(spaceId);
@@ -432,9 +499,11 @@ const playGameboardSpace = (spaceId) => {
   // If game still going, then update whose turn it is
   gameboardTurn.dataset.turn = gameState.whoseTurn;
 
+  // Save state to local storage
+  setLocalStorageValue(gameState, storageKey);
+
   // If CPU's turn, then have CPU make a move
-  // cpuMakeMove();
-  setTimeout(cpuMakeMove, cpuMoveDelay);
+  cpuMakeMove();
 };
 
 const invertGameboardSpace = (spaceId) => {
@@ -442,6 +511,7 @@ const invertGameboardSpace = (spaceId) => {
 };
 
 function createGameboardPiece(mark = "x", outline = false) {
+  if (mark === "") return null;
   const iconInfo =
     gamePieceIcons[mark.toLowerCase() + (outline ? "-outline" : "")];
   const newGameboardPieceOutline = document.createElementNS(
@@ -462,7 +532,7 @@ function createGameboardPiece(mark = "x", outline = false) {
 
 const renderEndGame = () => {
   // If game is not ended, then nothing to do, so return false
-  if (!gameState.isWinner && !gameState.isTied) return false;
+  if (!gameState.isGameOver) return false;
 
   // If game is ended, then render results
 
@@ -470,12 +540,15 @@ const renderEndGame = () => {
   renderWinningSpaces();
 
   // Update the scoreboard
-  if (gameState.isTied) gameHistory.ties++;
-  if (gameState.isWinner) {
-    if (gameState.winner.mark === "x") gameHistory.winsPlayerX++;
-    else gameHistory.winsPlayerO++;
+  if (gameState.isTied) gameState.history.ties++;
+  else if (gameState.isWinner) {
+    if (gameState.winner.mark === "x") gameState.history.winsPlayerX++;
+    else gameState.history.winsPlayerO++;
   }
   updateScoreboard();
+
+  // Save state to local storage
+  setLocalStorageValue(gameState, storageKey);
 
   // Render the results dialog
   renderResultsDialog();
@@ -504,17 +577,28 @@ const clearGameboard = () => {
   }
 };
 
+const renderGameboard = () => {
+  clearGameboard();
+  // for each space, render the appropriate mark
+  if (gameboardSpaces.length > 0) {
+    Array.from(gameboardSpaces).forEach((space) => {
+      if (gameState.gameboard[space.id] !== "")
+        space.appendChild(createGameboardPiece(gameState.gameboard[space.id]));
+    });
+  }
+};
+
 const updateScoreboard = () => {
   // X
   scoreboardPlayerXName.textContent = `(${gameState.playerX.shortname})`;
-  scoreboardPlayerXWins.textContent = gameHistory.winsPlayerX;
+  scoreboardPlayerXWins.textContent = gameState.history.winsPlayerX;
 
   // Ties
-  scoreboardTies.textContent = gameHistory.ties;
+  scoreboardTies.textContent = gameState.history.ties;
 
   // O
   scoreboardPlayerOName.textContent = `(${gameState.playerO.shortname})`;
-  scoreboardPlayerOWins.textContent = gameHistory.winsPlayerO;
+  scoreboardPlayerOWins.textContent = gameState.history.winsPlayerO;
 };
 
 const renderMainMenu = () => {
@@ -522,13 +606,33 @@ const renderMainMenu = () => {
   resultsDialog.close();
   gameboard.classList.add("hidden");
 
-  // Reset the scoreboard
-  gameHistory.winsPlayerX = 0;
-  gameHistory.winsPlayerO = 0;
-  gameHistory.ties = 0;
-
   // Show main menu
   mainMenu.classList.remove("hidden");
+};
+
+const renderExistingGame = (existingGameState) => {
+  // Hide Restart + Results Dialogs
+  resultsDialog.close();
+  restartDialog.close();
+
+  // (Deep) copy the existing game state object
+  gameState = JSON.parse(JSON.stringify(existingGameState));
+
+  // Use newly-loaded game state to:
+
+  // Update whose turn it is
+  gameboardTurn.dataset.turn = gameState.whoseTurn;
+
+  // populate the gameboard and scoreboard
+  renderGameboard();
+  updateScoreboard();
+
+  // Show gameboard and hide main menu
+  mainMenu.classList.add("hidden");
+  gameboard.classList.remove("hidden");
+
+  // If CPU's turn, then make a move
+  cpuMakeMove();
 };
 
 const renderNewGame = () => {
@@ -545,13 +649,15 @@ const renderNewGame = () => {
   // Update the scoreboard
   updateScoreboard();
 
+  // Save state to local storage
+  setLocalStorageValue(gameState, storageKey);
+
   // Show gameboard and hide main menu
   mainMenu.classList.add("hidden");
   gameboard.classList.remove("hidden");
 
   // If CPU's turn, then make a move
-  // cpuMakeMove();
-  setTimeout(cpuMakeMove, cpuMoveDelay);
+  cpuMakeMove();
 };
 
 const renderRestartDialog = () => {
@@ -612,6 +718,8 @@ const renderWinningSpaces = () => {
 const handleMainMenuButtonClick = (e) => {
   e.preventDefault();
 
+  createNewGameState();
+
   // Initialize the players for the new game
   const player1 = { mark: "", name: "", shortname: "" };
   const player2 = { mark: "", name: "", shortname: "" };
@@ -660,15 +768,20 @@ const handleMainMenuButtonClick = (e) => {
 
 const handleGameboardSpaceClick = (e) => {
   e.preventDefault();
-
-  playGameboardSpace(e.target.id);
+  if (
+    !gameState.isGameOver &&
+    !gameState.isCPUTurn &&
+    isGameboardSpaceAvailable(e.target.id)
+  ) {
+    playGameboardSpace(e.target.id);
+  }
 };
 
 const handleGameboardSpaceMouseEnter = (e) => {
   e.preventDefault();
   if (
-    !gameState.isWinner &&
-    !gameState.isTied &&
+    !gameState.isGameOver &&
+    !gameState.isCPUTurn &&
     isGameboardSpaceAvailable(e.target.id)
   ) {
     // Place appropriate mark temporarily (in its outline form)
@@ -701,9 +814,12 @@ const handleQuitButtonClick = (e) => {
   // Then the user can look at the board (and analyze it)
   // Can hit the restart button if they want to start a new game
   e.preventDefault();
-  // Alternatively, this button could take user back
-  // to the main menu
-  // And clear the board? (maybe not necessary)
+
+  // More in keeping with the design as a I understand it,
+  // this button should take user back to the main menu
+  // AND clear the game state and history, so the user is
+  // starting from scratch and can choose new players
+  clearGameState();
   renderMainMenu();
 };
 
@@ -719,9 +835,6 @@ const handleNextRoundButtonClick = (e) => {
 // Main program
 // ----------------------------------------
 
-// Render the Main Menu
-// mainMenuForm = renderMainMenu(allQuizData, mainElement);
-
 newGameVsCPUButton.addEventListener("click", handleMainMenuButtonClick);
 newGameVsPlayerButton.addEventListener("click", handleMainMenuButtonClick);
 
@@ -736,6 +849,15 @@ gameboardSpaces.forEach((space) => {
   space.addEventListener("mouseenter", handleGameboardSpaceMouseEnter);
   space.addEventListener("mouseleave", handleGameboardSpaceMouseLeave);
 });
+
+// If no game state has been saved, then do the default
+// which is to start up the main menu from a blank game state
+
+// else a game state has been saved, so
+// 1. retrieve game state from local storage
+// 2. initialize the game with the current state reflected in that local storage
+
+window.load = loadExistingGameState();
 
 // ----------------------------------------
 // End
