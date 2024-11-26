@@ -612,7 +612,7 @@ h4 {
   display: grid;
   justify-content: center;
   align-items: stretch;
-  transition: 0.5s background-color ease-in-out;
+  transition: 0.5s background-color ease-in-out, 0.5s fill ease-in-out;
   --padding-block: 11px;
 }
 

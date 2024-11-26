@@ -439,8 +439,7 @@ const findMarkWinningTrios = (gameboard, mark) => {
 };
 
 const isMarkAWinner = (gameboard = gameState.gameboard, mark = "x") => {
-  if (isTied(gameboard)) return false;
-
+  // if (isTied(gameboard)) return false;
   // Check each of the win options
   // if any are winners, then return true
   return findMarkWinningTrios(gameboard, mark).length > 0;
@@ -528,6 +527,9 @@ const minimax = (gameboard, mark = "x") => {
     }
   }
 
+  //console.log(moves);
+  //console.log(`${mark} - moves[${bestMove}] = ${bestScore}`);
+
   // return the chosen move (object) from the array to the higher depth
   return moves[bestMove];
 };
@@ -575,8 +577,9 @@ const isWinner = () => {
 
 const isTied = (gameboard = gameState.gameboard) => {
   // Check if any blank spaces remaining on the gameboard
+  // AND there isn't a winner
   //return Object.values(gameState.gameboard).indexOf("") == -1;
-  return findAvailableSpaces(gameboard).length === 0;
+  return !isWinner() && findAvailableSpaces(gameboard).length === 0;
 };
 
 const findAvailableSpaces = (gameboard = gameState.gameboard) => {
