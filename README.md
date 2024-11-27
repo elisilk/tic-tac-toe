@@ -86,6 +86,7 @@ Hmm 🤔 ...
   - [`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)
   - [`Array.prototype.reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
   - [`Array.prototype.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
+  - [`Array.prototype.every()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
 - [Filter a JavaScript object's properties by keys or values](https://www.30secondsofcode.org/js/s/filter-object-keys/) - These utility functions are particularly cool in illustrating the power and generalizability of these functions.
   - [30 seconds of code](https://www.30secondsofcode.org/) - Actually this whole website is pretty much amazing. I decided to add it to my collection of Useful Resources, as I want to remember to go back to it often.
 - [How to get a key in a JavaScript object by its value?](https://stackoverflow.com/questions/9907419/how-to-get-a-key-in-a-javascript-object-by-its-value)
@@ -98,6 +99,19 @@ Hmm 🤔 ...
   - [How to get cross-browser form `fieldset` content height in % (with legend)](https://stackoverflow.com/questions/29967730/how-to-get-cross-browser-form-fieldset-content-height-in-with-legend) and the [associated CodePen](https://codepen.io/Volker_E/full/zqPjrK/)
   - [Fieldset, legend, border-radius and box-shadow](https://www.456bereastreet.com/archive/201302/fieldset_legend_border-radius_and_box-shadow/)
   - [Legends of Style](https://www.tyssendesign.com.au/articles/css/legends-of-style/) and the [associated examples](https://www.tyssendesign.com.au/shed/examples/styling-legends.html)
+- [Minimax algorithm](https://en.wikipedia.org/wiki/Minimax) - To ensure the CPU plays intelligently.
+  - [How to make your Tic Tac Toe game unbeatable by using the minimax algorithm](https://www.freecodecamp.org/news/how-to-make-your-tic-tac-toe-game-unbeatable-by-using-the-minimax-algorithm-9d690bad4b37/) and the [associated GitHub repository](https://github.com/ahmaxed/minimaxarticle)
+  - [Tic Tac Toe: Understanding the Minimax Algorithm](https://www.neverstopbuilding.com/blog/minimax)
+  - Did you know that the complete game tree for tic-tac-toe (the number of possible different ways the game can be played) is 255,168 leaf nodes? [Reference](https://en.wikipedia.org/wiki/Game_tree#:~:text=For%20example%2C%20the%20game%20tree,toe%20has%20255%2C168%20leaf%20nodes.)
+- [Deep copy](https://developer.mozilla.org/en-US/docs/Glossary/Deep_copy)
+  - [JS Copy an Object – How to Clone an Obj in JavaScript](https://www.freecodecamp.org/news/clone-an-object-in-javascript/)
+- [View and edit local storage](https://developer.chrome.com/docs/devtools/storage/localstorage) - So helpful to learn how to view local storage in Chrome Developer Tools.
+- [Using CSS animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations/Using_CSS_animations) and [Using CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions)
+  - [`animation`](https://developer.mozilla.org/en-US/docs/Web/CSS/animation)
+  - [A Handy Little System for Animated Entrances in CSS](https://css-tricks.com/a-handy-little-system-for-animated-entrances-in-css/)
+  - [CSS Quick Tip: Animating in a newly added element](https://thinkdobecreate.com/articles/css-animating-newly-added-element/)
+  - [Animating the Dialog Element](https://frontendmasters.com/blog/animating-dialog/)
+  - [We can now transition to and from display: none](https://youtu.be/vmDEHAzj2XE?si=NNwvVhdzaMKzFOB9)
 
 ### Continued development
 
@@ -106,16 +120,9 @@ Specific areas that the solution should be improved (known issues):
 - Consider using a [mouseover](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event) event for the gameboard spaces instead of a [mouseenter](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseenter_event) event, to handle the case when the mouse is already hovering over a gameboard space when the CPU turn is complete and so it should create an outlined mark right away, rather than waiting for an entire new mouse reentry into the gameboard space
 - Think about [autofocus](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autofocus) of some buttons when a dialog is open, and what would be best in each case
 - Figure out why the "O" icons seem to have the edges cut off a bit, and correct it
-- Have a delay when the CPU is making a move
-  - Make sure the handleGameboardSpaceMouseEnter and the handleGameboardSpaceClick are disabled (temporarily) so that a user cannot add in icons while it's the CPU's turn (or really until any animation is complete?)
 - Animations
-  - Changing the main menu radio button from X to O
-  - When a mark is placed, especially when the CPU is placing it, so it's more obvious to the user
   - When user is placing a mark, it should animate from the outline to the filled in icon more seamlessly
-  - Animate the changing of the whose turn icon
-  - Animate the open and closing of the dialogs (and their backdrops)?
   - Animate the start of a new game? And the transition from the quit dialog to the main menu?
-- Have an animation when the dialog is opened
 - I have an outline on the radio buttons when the button is focused. But when the left radio button is in focus, the right side of the outline gets obscured by the right radio button. It would be great to figure out a way to make that outline come to the top. The design has the two buttons right next to each other with no gap, so that presents a challenge. And I like have a big chunky outline as I think it is consistent with the rest of the design. And I also like the outline extended a little beyond the box (instead of as an inset), since I think it is more visible on all the other boxes that way. But maybe the radio buttons should have a special modifier that puts their outline inset a bit since I'm not sure what other way to solve the issue.
 
 More general ideas I want to consider:
